@@ -20,6 +20,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.myweatherappv2.R
 import com.example.myweatherappv2.ui.theme.DarkBlue
+import kotlinx.coroutines.launch
 
 @Preview(showBackground = true)
 @Composable
@@ -146,6 +148,7 @@ fun MainCard() {
 fun TabLayout() {
     val tabList = listOf("HOURS", "DAYS")
     val pagerState = rememberPagerState()
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -156,22 +159,30 @@ fun TabLayout() {
             selectedTabIndex = 0,
             indicator = {  },
             containerColor = DarkBlue,
-            contentColor = Color.White
+            contentColor = Color.White,
+            //divider = {  }
         ) {
             tabList.forEachIndexed { index, text ->
                 Tab(
-                    selected = false,
+                    selected = index == pagerState.currentPage,
                     text = {
                         Text(text = text)
                     },
                     onClick = {
-                        /*TODO*/
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
                     }
                 )
             }
         }
-        HorizontalPager(pageCount = tabList.size, state = pagerState) {
-
+        HorizontalPager(
+            pageCount = tabList.size,
+            state = pagerState,
+            modifier = Modifier
+                .fillMaxSize()
+        ) { page ->
+            Text(text = "Page $page")
         }
     }
 }
