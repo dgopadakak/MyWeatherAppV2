@@ -2,6 +2,7 @@ package com.example.myweatherappv2.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Tab
@@ -33,7 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.myweatherappv2.R
-import com.example.myweatherappv2.ui.theme.DarkBlue
+import com.example.myweatherappv2.ui.theme.MyDarkBlueGray
+import com.example.myweatherappv2.ui.theme.MyLightBlueGray
 import kotlinx.coroutines.launch
 
 @Preview(showBackground = true)
@@ -44,13 +47,12 @@ fun MainScreen() {
         contentDescription = "background",
         modifier = Modifier
             .fillMaxSize()
-            .alpha(0.6f),       // TODO(Поиграть с этим значением)
+            .alpha(0.6f),
         contentScale = ContentScale.Crop
     )
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
             .padding(5.dp)
     ) {
         MainCard()
@@ -65,7 +67,7 @@ fun MainCard() {
         modifier = Modifier
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = DarkBlue
+            containerColor = MyDarkBlueGray
         )
     ) {
         Column(
@@ -157,9 +159,11 @@ fun TabLayout() {
     ) {
         TabRow(
             selectedTabIndex = pagerState.currentPage,
-            containerColor = DarkBlue,
+            containerColor = MyDarkBlueGray,
             contentColor = Color.White,
-            divider = {  }
+            divider = {
+                Divider(color = MyLightBlueGray)
+            }
         ) {
             tabList.forEachIndexed { index, text ->
                 Tab(
@@ -178,10 +182,23 @@ fun TabLayout() {
         HorizontalPager(
             pageCount = tabList.size,
             state = pagerState,
-            modifier = Modifier
-                .fillMaxSize()
         ) { page ->
-            Text(text = "Page $page")
+            Column {
+
+            }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SmallCardListItem() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MyDarkBlueGray),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+
     }
 }

@@ -57,7 +57,7 @@ fun MyWeatherAppV2Theme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = DarkBlue.toArgb() //colorScheme.primary.toArgb()
+            window.statusBarColor = MyDarkBlueGray.toArgb() //colorScheme.primary.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }
