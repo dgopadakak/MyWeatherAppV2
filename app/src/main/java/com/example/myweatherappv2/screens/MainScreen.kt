@@ -156,11 +156,10 @@ fun TabLayout() {
             .clip(RoundedCornerShape(12.dp))
     ) {
         TabRow(
-            selectedTabIndex = 0,
-            indicator = {  },
+            selectedTabIndex = pagerState.currentPage,
             containerColor = DarkBlue,
             contentColor = Color.White,
-            //divider = {  }
+            divider = {  }
         ) {
             tabList.forEachIndexed { index, text ->
                 Tab(
