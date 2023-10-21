@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.myweatherappv2.R
+import com.example.myweatherappv2.data.WeatherModel
 import com.example.myweatherappv2.ui.theme.MyDarkBlueGray
 import com.example.myweatherappv2.ui.theme.MyLightBlueGray
 import kotlinx.coroutines.launch
@@ -185,17 +186,31 @@ fun TabLayout() {
             state = pagerState,
         ) { page ->
             LazyColumn {
-                items(15) {
-                    ListItem()
+                items(7) {
+                    ListItem(WeatherModel(
+                        city = "London",
+                        time = "12:30",
+                        currentTemp = "23",
+                        condition = "Sunny",
+                        icon = "//cdn.weatherapi.com/weather/64x64/day/296.png",
+                        maxTemp = "25",
+                        minTemp = "22",
+                        hours = ""
+                    ), page)
                 }
             }
         }
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun ListItem() {
+fun ListItem(item: WeatherModel, page: Int) {
+    val mainText = if (page == 0) {
+        "${item.currentTemp}°C"
+    } else {
+        "${item.minTemp}°C / ${item.maxTemp}°C"
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -208,12 +223,16 @@ fun ListItem() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column {
-            Text(text = "12:00", color = Color.White)
-            Text(text = "Sunny", color = Color.White)
+            Text(text = item.time, color = Color.White)
+            Text(text = item.condition, color = Color.White)
         }
-        Text(text = "25°C", color = Color.White, fontSize = 25.sp)
+        Text(
+            text = mainText,
+            color = Color.White,
+            fontSize = 25.sp
+        )
         AsyncImage(
-            model = "https://cdn.weatherapi.com/weather/64x64/day/296.png",
+            model = "https:${item.icon}",
             contentDescription = "Weather icon",
             modifier = Modifier
                 .size(35.dp)
