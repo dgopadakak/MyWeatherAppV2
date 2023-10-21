@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -47,7 +48,7 @@ fun MainScreen() {
         contentDescription = "background",
         modifier = Modifier
             .fillMaxSize()
-            .alpha(0.6f),
+            .alpha(0.65f),
         contentScale = ContentScale.Crop
     )
 
@@ -183,8 +184,10 @@ fun TabLayout() {
             pageCount = tabList.size,
             state = pagerState,
         ) { page ->
-            Column {
-
+            LazyColumn {
+                items(15) {
+                    ListItem()
+                }
             }
         }
     }
@@ -192,13 +195,29 @@ fun TabLayout() {
 
 @Preview(showBackground = true)
 @Composable
-fun SmallCardListItem() {
+fun ListItem() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MyDarkBlueGray),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .background(MyDarkBlueGray)
+            .padding(
+                horizontal = 8.dp,
+                vertical = 5.dp
+            ),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-
+        Column {
+            Text(text = "12:00", color = Color.White)
+            Text(text = "Sunny", color = Color.White)
+        }
+        Text(text = "25°C", color = Color.White, fontSize = 25.sp)
+        AsyncImage(
+            model = "https://cdn.weatherapi.com/weather/64x64/day/296.png",
+            contentDescription = "Weather icon",
+            modifier = Modifier
+                .size(35.dp)
+        )
     }
+    Divider(color = MyLightBlueGray)
 }
