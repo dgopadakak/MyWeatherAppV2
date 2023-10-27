@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -20,18 +23,22 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val daysList = remember {
+                mutableStateOf(listOf<WeatherModel>())
+            }
+            getData(
+                city = "London",
+                context = this,
+                daysList = daysList
+            )
             MyWeatherAppV2Theme {
-                MainScreen()
+                MainScreen(daysList)
             }
         }
-        getData(
-            city = "London",
-            context = this
-        )
     }
 }
 
-private fun getData(city: String, context: Context) {
+private fun getData(city: String, context: Context, daysList: MutableState<List<WeatherModel>>) {
     val url = "https://api.weatherapi.com/v1/forecast.json?" +
             "key=$API_KEY" +
             "&q=$city" +
@@ -42,7 +49,8 @@ private fun getData(city: String, context: Context) {
         Request.Method.GET,
         url,
         { response ->
-            Log.i("IWTSI", "Response: $response")
+            val list = getWeatherByDays(response)
+            daysList.value = list
         },
         { error ->
             Log.e("IWTSI", error.toString())

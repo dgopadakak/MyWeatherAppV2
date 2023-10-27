@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,6 +24,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +33,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -41,9 +42,8 @@ import com.example.myweatherappv2.ui.theme.MyDarkBlueGray
 import com.example.myweatherappv2.ui.theme.MyLightBlueGray
 import kotlinx.coroutines.launch
 
-@Preview(showBackground = true)
 @Composable
-fun MainScreen() {
+fun MainScreen(daysList: MutableState<List<WeatherModel>>) {
     Image(
         painter = painterResource(id = R.drawable.background),
         contentDescription = "background",
@@ -58,11 +58,10 @@ fun MainScreen() {
             .padding(5.dp)
     ) {
         MainCard()
-        TabLayout()
+        TabLayout(daysList)
     }
 }
 
-@Preview(showBackground = true)
 @Composable
 fun MainCard() {
     Card(
@@ -147,9 +146,8 @@ fun MainCard() {
 }
 
 @OptIn(ExperimentalFoundationApi::class)
-@Preview(showBackground = true)
 @Composable
-fun TabLayout() {
+fun TabLayout(daysList: MutableState<List<WeatherModel>>) {
     val tabList = listOf("HOURS", "DAYS")
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
@@ -186,17 +184,13 @@ fun TabLayout() {
             state = pagerState,
         ) { page ->
             LazyColumn {
-                items(7) {
-                    ListItem(WeatherModel(
-                        city = "London",
-                        time = "12:30",
-                        currentTemp = "23",
-                        condition = "Sunny",
-                        icon = "//cdn.weatherapi.com/weather/64x64/day/296.png",
-                        maxTemp = "25",
-                        minTemp = "22",
-                        hours = ""
-                    ), page)
+                itemsIndexed(
+                    daysList.value
+                ) { _, item ->
+                    ListItem(
+                        item = item,
+                        page = page
+                    )
                 }
             }
         }
