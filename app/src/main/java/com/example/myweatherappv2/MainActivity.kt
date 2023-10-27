@@ -89,7 +89,7 @@ private fun getWeatherByDays(response: String): List<WeatherModel> {
         )
     }
     result[0] = result[0].copy(     // Для первого дня (это текущий день) заменяем часть информации
-        time = mainObject.getJSONObject("current").getString("last_update"),
+        time = mainObject.getJSONObject("current").getString("last_updated"),
         currentTemp = mainObject.getJSONObject("current").getString("temp_c")
     )
     return result
