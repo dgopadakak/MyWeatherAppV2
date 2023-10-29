@@ -41,9 +41,13 @@ import com.example.myweatherappv2.data.WeatherModel
 import com.example.myweatherappv2.ui.theme.MyDarkBlueGray
 import com.example.myweatherappv2.ui.theme.MyLightBlueGray
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @Composable
-fun MainScreen(daysList: MutableState<List<WeatherModel>>) {
+fun MainScreen(
+    daysList: MutableState<List<WeatherModel>>,
+    currentDay: MutableState<WeatherModel>
+) {
     Image(
         painter = painterResource(id = R.drawable.background),
         contentDescription = "background",
@@ -57,13 +61,13 @@ fun MainScreen(daysList: MutableState<List<WeatherModel>>) {
         modifier = Modifier
             .padding(5.dp)
     ) {
-        MainCard()
+        MainCard(currentDay)
         TabLayout(daysList)
     }
 }
 
 @Composable
-fun MainCard() {
+fun MainCard(currentDay: MutableState<WeatherModel>) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -80,14 +84,14 @@ fun MainCard() {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "20 Oct 2023 / 12:30",
+                    text = currentDay.value.time,
                     color = Color.White,
                     fontSize = 15.sp,
                     modifier = Modifier
                         .padding(top = 9.dp, start = 8.dp)
                 )
                 AsyncImage(
-                    model = "https://cdn.weatherapi.com/weather/64x64/day/296.png",
+                    model = "https:${currentDay.value.icon}",
                     contentDescription = "Weather icon",
                     modifier = Modifier
                         .padding(top = 3.dp, end = 8.dp)
@@ -95,17 +99,17 @@ fun MainCard() {
                 )
             }
             Text(
-                text = "London",
+                text = currentDay.value.city,
                 color = Color.White,
                 fontSize = 24.sp
             )
             Text(
-                text = "23°C",
+                text = "${currentDay.value.currentTemp.roundToInt()}°C",
                 color = Color.White,
                 fontSize = 65.sp
             )
             Text(
-                text = "Sunny",
+                text = currentDay.value.condition,
                 color = Color.White,
                 fontSize = 16.sp
             )
@@ -125,7 +129,8 @@ fun MainCard() {
                     )
                 }
                 Text(
-                    text = "23°C / 25°C",
+                    text = "${currentDay.value.minTemp.roundToInt()}°C /" +
+                            " ${currentDay.value.maxTemp.roundToInt()}°C",
                     color = Color.White,
                     fontSize = 16.sp
                 )
@@ -200,9 +205,9 @@ fun TabLayout(daysList: MutableState<List<WeatherModel>>) {
 @Composable
 fun ListItem(item: WeatherModel, page: Int) {
     val mainText = if (page == 0) {
-        "${item.currentTemp}°C"
+        "${item.currentTemp.roundToInt()}°"
     } else {
-        "${item.minTemp}°C / ${item.maxTemp}°C"
+        "${item.minTemp.roundToInt()}° / ${item.maxTemp.roundToInt()}°"
     }
 
     Row(

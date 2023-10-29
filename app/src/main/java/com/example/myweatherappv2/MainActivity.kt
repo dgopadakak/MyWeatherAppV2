@@ -26,19 +26,28 @@ class MainActivity : ComponentActivity() {
             val daysList = remember {
                 mutableStateOf(listOf<WeatherModel>())
             }
+            val currentDay = remember {
+                mutableStateOf(WeatherModel())
+            }
             getData(
                 city = "London",
                 context = this,
-                daysList = daysList
+                daysList = daysList,
+                currentDay = currentDay
             )
             MyWeatherAppV2Theme {
-                MainScreen(daysList)
+                MainScreen(daysList, currentDay)
             }
         }
     }
 }
 
-private fun getData(city: String, context: Context, daysList: MutableState<List<WeatherModel>>) {
+private fun getData(
+    city: String,
+    context: Context,
+    daysList: MutableState<List<WeatherModel>>,
+    currentDay: MutableState<WeatherModel>
+) {
     val url = "https://api.weatherapi.com/v1/forecast.json?" +
             "key=$API_KEY" +
             "&q=$city" +
@@ -51,6 +60,7 @@ private fun getData(city: String, context: Context, daysList: MutableState<List<
         { response ->
             val list = getWeatherByDays(response)
             daysList.value = list
+            currentDay.value = list[0]
         },
         { error ->
             Log.e("IWTSI", error.toString())
@@ -73,7 +83,7 @@ private fun getWeatherByDays(response: String): List<WeatherModel> {
             WeatherModel(
                 city = city,
                 time = item.getString("date"),
-                currentTemp = "",
+                currentTemp = 0.0,
                 condition = item
                     .getJSONObject("day")
                     .getJSONObject("condition")
@@ -82,15 +92,15 @@ private fun getWeatherByDays(response: String): List<WeatherModel> {
                     .getJSONObject("day")
                     .getJSONObject("condition")
                     .getString("icon"),
-                maxTemp = item.getJSONObject("day").getDouble("maxtemp_c").toString(),
-                minTemp = item.getJSONObject("day").getDouble("mintemp_c").toString(),
+                maxTemp = item.getJSONObject("day").getDouble("maxtemp_c"),
+                minTemp = item.getJSONObject("day").getDouble("mintemp_c"),
                 hours = item.getJSONArray("hour").toString()
             )
         )
     }
     result[0] = result[0].copy(     // Для первого дня (это текущий день) заменяем часть информации
         time = mainObject.getJSONObject("current").getString("last_updated"),
-        currentTemp = mainObject.getJSONObject("current").getString("temp_c")
+        currentTemp = mainObject.getJSONObject("current").getDouble("temp_c")
     )
     return result
 }
