@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -190,8 +192,13 @@ fun TabLayout(
             pageCount = tabList.size,
             state = pagerState,
         ) { page ->
+            val list = if (page == 0) {
+                getWeatherByHours(currentDay.value.hours)
+            } else {
+                daysList.value
+            }
             MainList(
-                list = daysList,
+                list = list,
                 currentDay = currentDay,
                 page = page
             )
@@ -201,11 +208,18 @@ fun TabLayout(
 
 @Composable
 fun MainList(
-    list: MutableState<List<WeatherModel>>,
+    list: List<WeatherModel>,
     currentDay: MutableState<WeatherModel>,
     page: Int
 ) {
-
+    LazyColumn {
+        itemsIndexed(list) { _, item ->
+            ListItem(
+                item = item,
+                page = page
+            )
+        }
+    }
 }
 
 @Composable
