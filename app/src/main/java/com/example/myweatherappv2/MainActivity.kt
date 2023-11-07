@@ -70,7 +70,7 @@ private fun getData(
 }
 
 private fun getWeatherByDays(response: String): List<WeatherModel> {
-    if (response.isEmpty()) return listOf()
+    if (response.isEmpty()) return emptyList()
 
     val mainObject = JSONObject(response)
     val days = mainObject.getJSONObject("forecast").getJSONArray("forecastday")

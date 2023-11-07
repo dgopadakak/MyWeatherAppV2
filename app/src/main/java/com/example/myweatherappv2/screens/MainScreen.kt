@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,6 +39,7 @@ import com.example.myweatherappv2.data.WeatherModel
 import com.example.myweatherappv2.ui.theme.MyDarkBlueGray
 import com.example.myweatherappv2.ui.theme.MyLightBlueGray
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 import kotlin.math.roundToInt
 
 @Composable
@@ -62,7 +61,7 @@ fun MainScreen(
             .padding(5.dp)
     ) {
         MainCard(currentDay)
-        TabLayout(daysList)
+        TabLayout(daysList, currentDay)
     }
 }
 
@@ -152,7 +151,10 @@ fun MainCard(currentDay: MutableState<WeatherModel>) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TabLayout(daysList: MutableState<List<WeatherModel>>) {
+fun TabLayout(
+    daysList: MutableState<List<WeatherModel>>,
+    currentDay: MutableState<WeatherModel>
+) {
     val tabList = listOf("HOURS", "DAYS")
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
@@ -188,18 +190,22 @@ fun TabLayout(daysList: MutableState<List<WeatherModel>>) {
             pageCount = tabList.size,
             state = pagerState,
         ) { page ->
-            LazyColumn {
-                itemsIndexed(
-                    daysList.value
-                ) { _, item ->
-                    ListItem(
-                        item = item,
-                        page = page
-                    )
-                }
-            }
+            MainList(
+                list = daysList,
+                currentDay = currentDay,
+                page = page
+            )
         }
     }
+}
+
+@Composable
+fun MainList(
+    list: MutableState<List<WeatherModel>>,
+    currentDay: MutableState<WeatherModel>,
+    page: Int
+) {
+
 }
 
 @Composable
@@ -238,4 +244,20 @@ fun ListItem(item: WeatherModel, page: Int) {
         )
     }
     Divider(color = MyLightBlueGray)
+}
+
+private fun getWeatherByHours(hours: String): List<WeatherModel> {
+    if (hours.isEmpty()) return emptyList()
+    val hoursArray = JSONArray(hours)
+    val list = ArrayList<WeatherModel>()
+    for (i in 0 until hoursArray.length()) {
+        val item = hoursArray.getJSONObject(i)
+        list.add(WeatherModel(
+            time = item.getString("time"),
+            currentTemp = item.getDouble("temp_c"),
+            condition = item.getJSONObject("condition").getString("text"),
+            icon = item.getJSONObject("condition").getString("icon")
+        ))
+    }
+    return list
 }
