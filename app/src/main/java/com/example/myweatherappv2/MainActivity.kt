@@ -36,7 +36,9 @@ class MainActivity : ComponentActivity() {
                 currentDay = currentDay
             )
             MyWeatherAppV2Theme {
-                MainScreen(daysList, currentDay)
+                MainScreen(daysList, currentDay, onClickSync = {
+                    getData("London", this@MainActivity, daysList, currentDay)
+                })
             }
         }
     }

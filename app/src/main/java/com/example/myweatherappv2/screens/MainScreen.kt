@@ -47,7 +47,8 @@ import kotlin.math.roundToInt
 @Composable
 fun MainScreen(
     daysList: MutableState<List<WeatherModel>>,
-    currentDay: MutableState<WeatherModel>
+    currentDay: MutableState<WeatherModel>,
+    onClickSync: () -> Unit
 ) {
     Image(
         painter = painterResource(id = R.drawable.background),
@@ -62,13 +63,13 @@ fun MainScreen(
         modifier = Modifier
             .padding(5.dp)
     ) {
-        MainCard(currentDay)
+        MainCard(currentDay, onClickSync)
         TabLayout(daysList, currentDay)
     }
 }
 
 @Composable
-fun MainCard(currentDay: MutableState<WeatherModel>) {
+fun MainCard(currentDay: MutableState<WeatherModel>, onClickSync: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -137,7 +138,7 @@ fun MainCard(currentDay: MutableState<WeatherModel>) {
                 )
                 IconButton(
                     onClick = {
-                        /*TODO*/
+                        onClickSync.invoke()
                     }
                 ) {
                     Icon(
