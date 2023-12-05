@@ -12,6 +12,7 @@ import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.myweatherappv2.data.WeatherModel
+import com.example.myweatherappv2.screens.DialogSearch
 import com.example.myweatherappv2.screens.MainScreen
 import com.example.myweatherappv2.ui.theme.MyWeatherAppV2Theme
 import org.json.JSONObject
@@ -26,6 +27,9 @@ class MainActivity : ComponentActivity() {
             val daysList = remember {
                 mutableStateOf(listOf<WeatherModel>())
             }
+            val dialogState = remember {
+                mutableStateOf(false)
+            }
             val currentDay = remember {
                 mutableStateOf(WeatherModel())
             }
@@ -36,9 +40,17 @@ class MainActivity : ComponentActivity() {
                 currentDay = currentDay
             )
             MyWeatherAppV2Theme {
-                MainScreen(daysList, currentDay, onClickSync = {
-                    getData("London", this@MainActivity, daysList, currentDay)
-                })
+                MainScreen(
+                    daysList = daysList,
+                    currentDay = currentDay,
+                    dialogState = dialogState,
+                    onClickSync = {
+                        getData("London", this@MainActivity, daysList, currentDay)
+                    }
+                )
+                if (dialogState.value) {
+                    DialogSearch(dialogState = dialogState)
+                }
             }
         }
     }

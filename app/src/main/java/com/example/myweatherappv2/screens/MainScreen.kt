@@ -15,14 +15,18 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -48,6 +52,7 @@ import kotlin.math.roundToInt
 fun MainScreen(
     daysList: MutableState<List<WeatherModel>>,
     currentDay: MutableState<WeatherModel>,
+    dialogState: MutableState<Boolean>,
     onClickSync: () -> Unit
 ) {
     Image(
@@ -63,13 +68,17 @@ fun MainScreen(
         modifier = Modifier
             .padding(5.dp)
     ) {
-        MainCard(currentDay, onClickSync)
+        MainCard(currentDay, dialogState, onClickSync)
         TabLayout(daysList, currentDay)
     }
 }
 
 @Composable
-fun MainCard(currentDay: MutableState<WeatherModel>, onClickSync: () -> Unit) {
+fun MainCard(
+    currentDay: MutableState<WeatherModel>,
+    dialogState: MutableState<Boolean>,
+    onClickSync: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -121,7 +130,7 @@ fun MainCard(currentDay: MutableState<WeatherModel>, onClickSync: () -> Unit) {
             ) {
                 IconButton(
                     onClick = {
-                        /*TODO*/
+                        dialogState.value = true
                     }
                 ) {
                     Icon(
@@ -275,4 +284,38 @@ private fun getWeatherByHours(hours: String): List<WeatherModel> {
         ))
     }
     return list
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DialogSearch(dialogState: MutableState<Boolean>,) {
+    AlertDialog(
+        onDismissRequest = {
+            dialogState.value = false
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                dialogState.value = false
+            }) {
+                Text(text = "OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = {
+                dialogState.value = false
+            }) {
+                Text(text = "Cancel")
+            }
+        },
+        title = {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "Enter city:")
+                TextField(value = "Text", onValueChange = {
+
+                })
+            }
+        }
+    )
 }
