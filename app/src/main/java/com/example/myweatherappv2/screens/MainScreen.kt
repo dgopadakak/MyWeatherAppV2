@@ -22,13 +22,15 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -289,6 +291,10 @@ private fun getWeatherByHours(hours: String): List<WeatherModel> {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DialogSearch(dialogState: MutableState<Boolean>,) {
+    val dialogText = remember {
+        mutableStateOf("")
+    }
+
     AlertDialog(
         onDismissRequest = {
             dialogState.value = false
@@ -296,6 +302,7 @@ fun DialogSearch(dialogState: MutableState<Boolean>,) {
         confirmButton = {
             TextButton(onClick = {
                 dialogState.value = false
+
             }) {
                 Text(text = "OK")
             }
@@ -312,8 +319,8 @@ fun DialogSearch(dialogState: MutableState<Boolean>,) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "Enter city:")
-                TextField(value = "Text", onValueChange = {
-
+                OutlinedTextField(value = dialogText.value, onValueChange = {
+                    dialogText.value = it
                 })
             }
         }
