@@ -49,7 +49,9 @@ class MainActivity : ComponentActivity() {
                     }
                 )
                 if (dialogState.value) {
-                    DialogSearch(dialogState = dialogState)
+                    DialogSearch(dialogState = dialogState) {
+                        /* TODO */
+                    }
                 }
             }
         }

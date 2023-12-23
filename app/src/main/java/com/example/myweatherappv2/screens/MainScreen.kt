@@ -278,19 +278,24 @@ private fun getWeatherByHours(hours: String): List<WeatherModel> {
     val list = ArrayList<WeatherModel>()
     for (i in 0 until hoursArray.length()) {
         val item = hoursArray.getJSONObject(i)
-        list.add(WeatherModel(
-            time = item.getString("time"),
-            currentTemp = item.getDouble("temp_c"),
-            condition = item.getJSONObject("condition").getString("text"),
-            icon = item.getJSONObject("condition").getString("icon")
-        ))
+        list.add(
+            WeatherModel(
+                time = item.getString("time"),
+                currentTemp = item.getDouble("temp_c"),
+                condition = item.getJSONObject("condition").getString("text"),
+                icon = item.getJSONObject("condition").getString("icon")
+            )
+        )
     }
     return list
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DialogSearch(dialogState: MutableState<Boolean>,) {
+fun DialogSearch(
+    dialogState: MutableState<Boolean>,
+    onSubmit: (String) -> Unit
+) {
     val dialogText = remember {
         mutableStateOf("")
     }
@@ -302,7 +307,7 @@ fun DialogSearch(dialogState: MutableState<Boolean>,) {
         confirmButton = {
             TextButton(onClick = {
                 dialogState.value = false
-
+                onSubmit.invoke(dialogText.value)
             }) {
                 Text(text = "OK")
             }
